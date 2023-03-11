@@ -147,5 +147,106 @@ def logout():
     session.clear()
     return redirect(url_for("home"))
 
+
+
+conn = sqlite3.connect('courses.db', check_same_thread=False)
+c = conn.cursor()
+
+# Create "registered" table
+c.execute(
+    'CREATE TABLE IF NOT EXISTS registered (cname TEXT, p1 INTEGER, p2 INTEGER, p3 INTEGER, p4 INTEGER, p5 INTEGER, score INTEGER)')
+
+# Create "suggestion" table
+c.execute('CREATE TABLE IF NOT EXISTS suggestion (cname TEXT, enroll TEXT)')
+
+# Create "completed" table
+c.execute('CREATE TABLE IF NOT EXISTS completed (cname TEXT)')
+
+
+
+# Handle "Registered" button click
+@app.route('/registered', methods=['POST'])
+def registered():
+    cname = request.form['cname']
+    p1 = request.form['p1']
+    p2 = request.form['p2']
+    p3 = request.form['p3']
+    p4 = request.form['p4']
+    p5 = request.form['p5']
+    score = 0  # initial score is 0
+    c.execute('INSERT INTO registered (cname, p1, p2, p3, p4, p5, score) VALUES (?, ?, ?, ?, ?, ?, ?)',
+              (cname, p1, p2, p3, p4, p5, score))
+    conn.commit()
+    return redirect(url_for('index'))
+
+
+# Handle "Suggestion" button click
+@app.route('/suggestion', methods=['POST'])
+def suggestion():
+    cname = request.form['cname']
+    c.execute('INSERT INTO suggestion (cname, enroll) VALUES (?, 0)', (cname,))
+    conn.commit()
+    return redirect(url_for('index'))
+
+
+@app.route('/rview')
+def rview():
+    # Retrieve the data from the "registered" table
+    c.execute("SELECT * FROM registered")
+    data = c.fetchall()
+    return render_template('registered.html', data=data)
+
+
+@app.route('/cview')
+def cview():
+    # Retrieve the data from the "completed" table
+    c.execute("SELECT * FROM completed")
+    data = c.fetchall()
+    return render_template('completed.html', data=data)
+
+
+@app.route('/sview', methods=['GET', 'POST'])
+def sview():
+
+    # Retrieve the data from the "suggestion" table
+    c.execute("SELECT * FROM suggestion")
+    data = c.fetchall()
+    return render_template('suggestion.html', data=data)
+
+
+@app.route('/enroll')
+def enroll():
+    cname = request.args.get('cname')
+    if cname:
+        # Get course name and update registered table
+        c.execute('SELECT cname FROM suggestion WHERE cname = ?', (cname,))
+        row = c.fetchone()
+        if row:
+            cname = row[0]
+            c.execute('INSERT INTO registered (cname, p1, p2, p3, p4, p5, score) VALUES (?, "", "", "", "", "", 0)', (cname,))
+            # Delete row from suggestion table
+            c.execute('DELETE FROM suggestion WHERE cname = ?', (cname,))
+            conn.commit()
+            return redirect(url_for('home'))
+    return "Invalid request."
+
+
+@app.route('/finish/<string:cname>')
+def finish(cname):
+    # Get current score
+    c.execute('SELECT score FROM registered WHERE cname = ?', (cname,))
+    score = c.fetchone()[0]
+
+    # Update score and move to "completed" table if score is 100
+    if score >= 100:
+        c.execute('SELECT cname FROM registered WHERE cname = ?', (cname,))
+        cname = c.fetchone()[0]
+        c.execute('INSERT INTO completed (cname) VALUES (?)', (cname,))
+        c.execute('DELETE FROM registered WHERE cname = ?', (cname,))
+
+    conn.commit()
+    return redirect(url_for('home'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)

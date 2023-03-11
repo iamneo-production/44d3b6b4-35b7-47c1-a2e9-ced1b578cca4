@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Registered Courses</title>
+  </head>
+  <body>
+    <h1>Registered Courses</h1>
+    <table>
+      <tr>
+        <th>Course Name</th>
+        <th>P 1</th>
+        <th>P 2</th>
+        <th>P 3</th>
+        <th>P 4</th>
+        <th>P 5</th>
+        <th>Score</th>
+        <th>Finish</th>
+      </tr>
+      {% for row in data %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+        <td>{{ row[3] }}</td>
+        <td>{{ row[4] }}</td>
+        <td>{{ row[5] }}</td>
+        <td>{{ row[6] }}</td>
+        <td><button><a href="{{ url_for("finish",cname=row[0]) }}">Finish</a></button></td>
+      </tr>
+      {% endfor %}
+    </table>
+    <button class="btn" style="background-color: black;border-radius: 25px ;padding: 10px 30px"><a href="{{ url_for("homepage") }}" style="color: white;text-decoration: none">Back to Home</a></button>
+
+
+  </body>
+</html>
