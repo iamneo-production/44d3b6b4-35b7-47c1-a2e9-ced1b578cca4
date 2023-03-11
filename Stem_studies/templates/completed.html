@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Registered Courses</title>
+  </head>
+  <body>
+    <h1>Registered Courses</h1>
+    <table>
+      <tr>
+        <th>Course Name</th>
+      </tr>
+      {% for row in data %}
+      <tr>
+        <td>{{ row[0] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  <button class="btn" style="background-color: black;border-radius: 25px ;padding: 10px 30px"><a href="{{ url_for("homepage") }}" style="color: white;text-decoration: none">Back to Home</a></button>
+  </body>
+</html>
