@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <title>View Record</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+    <div class="container">
+        <div class="col-md-offset-1 col-md-10">
+            <h2 class="page-header text-center text-primary mt-5 mb-5">View Record</h2>
+            <h4><div class="row" style="margin-top: 20px">
+               {% with messages =get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {%  for category,message in messages %}
+                            <div class="alert alert-{{category}}">{{message}}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+           </div></h4>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Place</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for res in data %}
+                        {% set i=loop.index %}
+                <tr>
+                    <td>{{ i }}</td>
+                    <td>{{ res["name"] }}</td>
+                    <td>{{ res["age"] }}</td>
+                    <td>{{ res["gender"] }}</td>
+                    <td>{{ res["mail"] }}</td>
+                    <td>{{ res["phone"] }}</td>
+                    <td>{{ res["place"] }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        <div>
+            <a href="{{ url_for("home") }}" class="btn btn-success">Back to Home</a>
+        </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
